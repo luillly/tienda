@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mkyong.common.model.GeneroLibro;
 import com.mkyong.common.model.Libro;
 
 @Repository
@@ -34,7 +35,7 @@ public class LibroDAO  {
         this.sessionFactory = sf;
     }
  
-    public void addLibro(Libro s) {
+    public static void addLibro(Libro s) {
         Session session = getCurrentSession();
         session.persist(s);
         session.flush();
@@ -80,6 +81,26 @@ public class LibroDAO  {
         
         
         
+    }
+    
+    public static List<GeneroLibro> getListGeneroLibro(){
+    	Session session = getCurrentSession();
+        
+        List<GeneroLibro> generoLibroList = session.createQuery("from GeneroLibro").list();
+        for(GeneroLibro g : generoLibroList){
+            logger.info("Genero List::"+g);
+        }
+        session.close();
+        return generoLibroList;
+    }
+    
+    public static GeneroLibro getGeneroLibro(String codigo){
+    	Session session = getCurrentSession();
+        
+        GeneroLibro generoLibro = (GeneroLibro) session.createQuery("from GeneroLibro where codigo= '"+codigo+"'").uniqueResult();
+        logger.info("Genero :"+generoLibro);
+        session.close();
+        return generoLibro;
     }
  
 }

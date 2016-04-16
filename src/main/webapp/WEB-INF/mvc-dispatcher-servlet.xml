@@ -43,6 +43,7 @@
 								<list>
 									<value>com.mkyong.common.model.Fruit</value>
 									<value>com.mkyong.common.model.Libro</value>
+									<value>com.mkyong.common.model.GeneroLibro</value>
 								</list>
 							</property>
 						</bean>
@@ -85,6 +86,7 @@
          <property name="annotatedClasses">
             <list>
                 <value>com.mkyong.common.model.Libro</value>
+                <value>com.mkyong.common.model.GeneroLibro</value>
             </list>
         </property> 
         <property name="hibernateProperties">

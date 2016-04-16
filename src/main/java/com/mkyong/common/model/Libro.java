@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,11 +30,12 @@ public class Libro {
 	@Column(name="isbn")
 	String isbn;
 	
-	@Column(name="genero")
-	String genero;
+	@ManyToOne
+	@JoinColumn(name="idgen")
+	GeneroLibro genero;
 
 	public Libro(Integer idLibro, String titulo, String autor, String isbn,
-			String genero) {
+			GeneroLibro genero) {
 		super();
 		this.idLibro = idLibro;
 		this.titulo = titulo;
@@ -44,7 +49,7 @@ public class Libro {
 		this.titulo = "";
 		this.autor = "";
 		this.isbn = "";
-		this.genero = "";
+		this.genero = null;
 	}
 
 	public Integer getIdLibro() {
@@ -79,11 +84,11 @@ public class Libro {
 		this.isbn = isbn;
 	}
 
-	public String getGenero() {
+	public GeneroLibro getGenero() {
 		return genero;
 	}
 
-	public void setGenero(String genero) {
+	public void setGenero(GeneroLibro genero) {
 		this.genero = genero;
 	}
 	
