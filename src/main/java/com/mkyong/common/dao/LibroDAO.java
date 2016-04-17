@@ -42,12 +42,15 @@ public class LibroDAO  {
         session.close();
         logger.info("Libro saved successfully, Socio Details="+s);
         
+        
     }
  
-    public void updateLibro(Libro s) {
+    public static void updateLibro(Libro s) {
         Session session = getCurrentSession();
         session.update(s);
         logger.info("Libro updated successfully, Socio Details="+s);
+        session.flush();
+        session.close();
     }
     
     
@@ -98,6 +101,15 @@ public class LibroDAO  {
     	Session session = getCurrentSession();
         
         GeneroLibro generoLibro = (GeneroLibro) session.createQuery("from GeneroLibro where codigo= '"+codigo+"'").uniqueResult();
+        logger.info("Genero :"+generoLibro);
+        session.close();
+        return generoLibro;
+    }
+    
+    public static GeneroLibro getGeneroLibroDes(String descripcion){
+    	Session session = getCurrentSession();
+        
+        GeneroLibro generoLibro = (GeneroLibro) session.createQuery("from GeneroLibro where descripcion= '"+descripcion+"'").uniqueResult();
         logger.info("Genero :"+generoLibro);
         session.close();
         return generoLibro;

@@ -51,6 +51,14 @@ public class LibroController {
 	
 	@RequestMapping(value="guardarlibro")
 	public String guardarLibro(Locale locale, Model model, HttpServletRequest request){
+		Integer id=0;
+		try{
+			id= Integer.parseInt(request.getParameter("id"));
+		}
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
 		
 		String titulo= request.getParameter("titulo");
 		String autor= request.getParameter("autor");
@@ -58,14 +66,31 @@ public class LibroController {
 		String codigo= request.getParameter("genero");
 		
 		GeneroLibro genero= LibroDAO.getGeneroLibro(codigo);
-		
 		Libro libro= new Libro();
+		
+		if(id!=0){
+			libro.setIdLibro(id);
+			
+		}
+		if(genero==null){
+			genero= LibroDAO.getGeneroLibroDes(codigo);
+		}
+		
+		
 		libro.setTitulo(titulo);
 		libro.setAutor(autor);
 		libro.setIsbn(isbn);
 		libro.setGenero(genero);
 		
-		LibroDAO.addLibro(libro);
+		System.out.println("gen entrada: "+ genero);
+		System.out.println("gen: "+libro.getGenero());
+		
+		if(request.getParameter("id")!= null && request.getParameter("id")!= ""){
+			LibroDAO.updateLibro(libro);
+		}
+		else{
+			LibroDAO.addLibro(libro);
+		}
 
 		return "listalibros";
 	}

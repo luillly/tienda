@@ -34,6 +34,73 @@
 	storeUsuarios.load();	
 	storeGeneros.load();	
 	
+	var btnEditar= new Ext.Button({
+		text: 'Editar',
+		id: 'editar',
+		handler: function(){
+   		 var id= grid.getSelectionModel().getSelected().get('idLibro');
+		 var titulo= grid.getSelectionModel().getSelected().get('titulo');
+		 var autor= grid.getSelectionModel().getSelected().get('autor');
+		 var isbn= grid.getSelectionModel().getSelected().get('isbn');
+		 var genero= grid.getSelectionModel().getSelected().get('genero.descripcion');
+		 var codigo= grid.getSelectionModel().getSelected().get('genero.codigo');
+
+		 Ext.getCmp('id').setValue(id);
+		 Ext.getCmp('titulo').setValue(titulo);
+		 Ext.getCmp('autor').setValue(autor);
+		 Ext.getCmp('isbn').setValue(isbn);
+		 Ext.getCmp('genero').setValue(genero);
+		 
+			var winForm= new Ext.Window({
+			    title: 'Editar Libro',
+			    height: 250,
+			    width: 400,
+			   	items:[simple],
+			   	closable: false,
+			   	buttons: [{
+		            text: 'Save',
+		            	handler: function(){
+		            		if(!simple.getForm().isValid()){
+		            			Ext.Msg.alert('Error', 'Rellene los campos obligatorios');
+		            		}
+		            		else{
+		            			var valores= simple.getForm().getFieldValues();
+		            			Ext.Ajax.request({
+		            				url: 'guardarlibro',
+		            				method: 'POST',
+		            				success: function(){
+		            					
+		            					simple.getForm().reset();
+				            			winForm.hide();
+				            			storeLibros.load();
+				            			grid.getView().refresh();
+		            				},
+		            				failure: function(){
+		            					Ext.Msg.alert('Error', 'Error al guardado')
+		            				},
+		            				params: { 	id: valores.id,
+		            							titulo: valores.titulo,
+		            							autor: valores.autor,
+		            							isbn: valores.isbn,
+		            							genero: valores.genero
+		            						}
+		            			});
+
+		            		}
+		            		
+		            	}
+		        	},
+		            {
+			            text: 'Cancel',
+			            handler: function(){
+			            	simple.getForm().reset();
+			            	winForm.hide();
+			        }
+		        }]
+			}).show();
+		}
+	});
+	
 	var btnEliminar= new Ext.Button({
 		text: 'Eliminar',
 		id: 'btnEliminar',
@@ -47,6 +114,7 @@
             			storeLibros.load();
             			grid.getView().refresh();
             			btnEliminar.setDisabled(true);
+            			btnEditar.setDisabled(true);
        	    		 	grid.getTopToolbar().doLayout();
             			
     				},
@@ -74,7 +142,14 @@
         labelAlign: 'right',
         defaultType: 'textfield',
 
-        items: [{
+        items: [new Ext.form.Hidden({
+        		fieldLabel: 'ID',
+        		name: 'id',
+        		id: 'id',
+        		allowBlank:false,
+        		hide: true
+       	 	})
+        	,{
                 fieldLabel: 'Titulo',
                 name: 'titulo',
                 id: 'titulo',
@@ -175,6 +250,7 @@
 			{header:'Genero', dataIndex:'genero.descripcion',sortable: true},
 		],
 		border: false,
+		id: 'grid',
 		stripeRows: true,
 		title: 'Grid Libros',
 		viewConfig: {
@@ -187,7 +263,9 @@
 	     listeners: {
 	    	 click: function(record){
 	    		 btnEliminar.setDisabled(false);
+	    		 btnEditar.setDisabled(false)
 	    		 grid.getTopToolbar().add(btnEliminar);
+	    		 grid.getTopToolbar().add(btnEditar);
 	    		 grid.getTopToolbar().doLayout();
 	    	 }
 	     }
