@@ -64,7 +64,7 @@ public class LibroDAO  {
         return libroList;
     }
  
-    public Libro getLibroById(int id) {
+    public static Libro getLibroById(int id) {
         Session session = getCurrentSession();      
         Libro s = (Libro) session.load(Libro.class, new Integer(id));
         logger.info("Libro loaded successfully, Socio details="+s);
@@ -72,7 +72,7 @@ public class LibroDAO  {
         return s;
     }
  
-    public void removeLibro(Libro libro) {
+    public static void removeLibro(Libro libro) {
         Session session = getCurrentSession();
         session.delete(libro);
         logger.info("Borrado correctamente"+libro);

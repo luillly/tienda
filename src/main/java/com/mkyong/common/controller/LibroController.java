@@ -70,6 +70,18 @@ public class LibroController {
 		return "listalibros";
 	}
 	
+	@RequestMapping(value="eliminarlibro")
+	public String eliminarLibro(Locale locale, Model model, HttpServletRequest request){
+		
+		Integer id= Integer.parseInt(request.getParameter("id"));
+		
+		Libro libro= LibroDAO.getLibroById(id);
+		
+		LibroDAO.removeLibro(libro);
+
+		return "listalibros";
+	}
+	
 	
 	@RequestMapping(value="listageneros")
 	public String obtenerListaGeneros(Locale locale, Model model){

@@ -12,15 +12,56 @@
 	<script type="text/javascript">
 	Ext.onReady(function(){
 		
+	var storeLibros = new Ext.data.JsonStore({
+		url: 'listalibros.json',
+		root: 'listalibros',
+		fields: ['idLibro','titulo','autor','isbn','genero.descripcion']
+	});
 		
-		
-		
+	var storeUsuarios = new Ext.data.JsonStore({
+		url: 'listausuarios.json',
+		root: 'listausuarios',
+		fields: ['idUsuario','usuario','password']
+	});
+	
 	var storeGeneros = new Ext.data.JsonStore({
 		url: 'listageneros.json',
 		root: 'listageneros',
 		fields: ['idgen','descripcion','descripcion_larga','codigo']
 	});
-	storeGeneros.load();
+
+	storeLibros.load();
+	storeUsuarios.load();	
+	storeGeneros.load();	
+	
+	var btnEliminar= new Ext.Button({
+		text: 'Eliminar',
+		id: 'btnEliminar',
+		handler: function(){
+			if(grid.getSelectionModel()!= null){
+				var id= grid.getSelectionModel().getSelected().get('idLibro');
+				Ext.Ajax.request({
+    				url: 'eliminarlibro',
+    				method: 'POST',
+    				success: function(){
+            			storeLibros.load();
+            			grid.getView().refresh();
+            			btnEliminar.setDisabled(true);
+       	    		 	grid.getTopToolbar().doLayout();
+            			
+    				},
+    				failure: function(){
+    					Ext.Msg.alert('Error', 'Error al eliminar');
+    				},
+    				params: {id: id}
+    			});
+			}
+			else{
+				Ext.Msg.alert('Error', 'Seleccione un elemento');
+			}
+			
+		}
+	});
 		
 	var simple = new Ext.FormPanel({
         labelWidth: 75, // label settings here cascade unless overridden
@@ -119,28 +160,9 @@
 		}
 	});
 	
-	var toolbardown= new Ext.Toolbar({
-		items: [
-			btnAñadirLibro
-		]
-	});
-	
 
 	
-	var storeLibros = new Ext.data.JsonStore({
-		url: 'listalibros.json',
-		root: 'listalibros',
-		fields: ['idLibro','titulo','autor','isbn','genero.descripcion']
-	});
-	
-	var storeUsuarios = new Ext.data.JsonStore({
-		url: 'listausuarios.json',
-		root: 'listausuarios',
-		fields: ['idUsuario','usuario','password']
-	});
 
-	storeLibros.load();
-	storeUsuarios.load();
 	
 	var grid = new Ext.grid.GridPanel({
 		store: storeLibros, // <--- le asignamos el store con la información a utilizar
@@ -161,7 +183,14 @@
 	     autoHeight: true,
 	     tbar:[
 	    	 btnAñadirLibro
-	     ]
+	     ],
+	     listeners: {
+	    	 click: function(record){
+	    		 btnEliminar.setDisabled(false);
+	    		 grid.getTopToolbar().add(btnEliminar);
+	    		 grid.getTopToolbar().doLayout();
+	    	 }
+	     }
 	});
 	
 	var gridUsuarios = new Ext.grid.GridPanel({
